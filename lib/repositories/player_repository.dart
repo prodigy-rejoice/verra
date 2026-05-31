@@ -13,8 +13,9 @@ class PlayerRepository {
 
   static const String _walletAddressKey = 'verra_wallet_address';
   static const String _displayNameKey = 'verra_display_name';
+  static const String _noProfileMessage = 'No profile found on-chain.';
 
-  Future<PlayerProfile> getProfile(String walletAddress) async {
+  Future<PlayerProfile?> getProfile(String walletAddress) async {
     _logger.i('Fetching profile for $walletAddress');
     try {
       final profile = await _suiService.getPlayerProfile(walletAddress);
@@ -23,11 +24,38 @@ class PlayerRepository {
       return displayName == null
           ? profile
           : profile.copyWith(displayName: displayName);
+    } on SuiException catch (e) {
+      if (e.message == _noProfileMessage) {
+        _logger.i('No on-chain profile for $walletAddress');
+        return null;
+      }
+      rethrow;
     } on VerraException {
       rethrow;
     } catch (e, stack) {
       _logger.e('Failed to fetch profile', error: e, stackTrace: stack);
       throw VerraException('Unable to load player profile.', cause: e);
+    }
+  }
+
+  Future<bool> hasProfile(String walletAddress) async {
+    _logger.i('Checking profile existence for $walletAddress');
+    return await getProfile(walletAddress) != null;
+  }
+
+  Future<String> createProfile() async {
+    final walletAddress = await _readWalletAddress();
+    _logger.i('Creating profile for $walletAddress');
+    try {
+      final txDigest =
+          await _suiService.createPlayerProfile(walletAddress ?? '');
+      _logger.d('Profile created — digest: $txDigest');
+      return txDigest;
+    } on VerraException {
+      rethrow;
+    } catch (e, stack) {
+      _logger.e('Failed to create profile', error: e, stackTrace: stack);
+      throw VerraException('Unable to create player profile.', cause: e);
     }
   }
 
@@ -43,17 +71,8 @@ class PlayerRepository {
     return generated;
   }
 
-  Future<String> createProfile(String walletAddress) async {
-    _logger.i('Creating profile for $walletAddress');
-    try {
-      final txDigest = await _suiService.createPlayerProfile(walletAddress);
-      _logger.d('Profile created — digest: $txDigest');
-      return txDigest;
-    } on VerraException {
-      rethrow;
-    } catch (e, stack) {
-      _logger.e('Failed to create profile', error: e, stackTrace: stack);
-      throw VerraException('Unable to create player profile.', cause: e);
-    }
+  Future<String?> _readWalletAddress() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_walletAddressKey);
   }
 }
