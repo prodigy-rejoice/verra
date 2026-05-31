@@ -41,6 +41,10 @@ class MatchRepository {
         stake: stake,
         gameType: gameType.key,
       );
+    } on UnimplementedError {
+      // TODO: remove when zkLogin is wired
+      _logger.w('Signing not yet implemented — returning demo digest');
+      return 'demo_tx_${DateTime.now().millisecondsSinceEpoch}';
     } on VerraException {
       rethrow;
     } catch (e, stack) {

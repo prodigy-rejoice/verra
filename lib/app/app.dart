@@ -37,7 +37,7 @@ import '../services/zklogin_service.dart';
     MaterialRoute(page: LeaderboardView),
     MaterialRoute(page: ChallengeLobbyView),
     MaterialRoute(page: MatchView),
-    MaterialRoute(page: ChainReflexView),
+    MaterialRoute(page: ChainReflexView, fullscreenDialog: true),
     MaterialRoute(page: CryptoTriviaView),
     MaterialRoute(page: WordStakeView),
     MaterialRoute(page: PatternBreakerView),

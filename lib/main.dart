@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'app/app.locator.dart';
@@ -6,10 +7,13 @@ import 'app/app.router.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/app_strings.dart';
 import 'core/constants/app_text_styles.dart';
+import 'services/supabase_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await setupLocator();
+  await locator<SupabaseService>().initialize();
   runApp(const VerraApp());
 }
 

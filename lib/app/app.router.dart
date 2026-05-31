@@ -136,7 +136,10 @@ class StackedRouter extends _i1.RouterBase {
         orElse: () => const ProfileViewArguments(),
       );
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i6.ProfileView(key: args.key),
+        builder: (context) => _i6.ProfileView(
+          key: args.key,
+          onPlayPressedOverride: args.onPlayPressedOverride,
+        ),
         settings: data,
       );
     },
@@ -168,12 +171,17 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i10.ChainReflexView: (data) {
-      final args = data.getArgs<ChainReflexViewArguments>(
-        orElse: () => const ChainReflexViewArguments(),
-      );
+      final args = data.getArgs<ChainReflexViewArguments>(nullOk: false);
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i10.ChainReflexView(key: args.key),
+        builder: (context) => _i10.ChainReflexView(
+          key: args.key,
+          matchId: args.matchId,
+          playerAddress: args.playerAddress,
+          opponentAddress: args.opponentAddress,
+          stakeAmount: args.stakeAmount,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     _i11.CryptoTriviaView: (data) {
@@ -319,24 +327,27 @@ class HomeViewArguments {
 }
 
 class ProfileViewArguments {
-  const ProfileViewArguments({this.key});
+  const ProfileViewArguments({this.key, this.onPlayPressedOverride});
 
   final _i16.Key? key;
 
+  final void Function()? onPlayPressedOverride;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "onPlayPressedOverride": "$onPlayPressedOverride"}';
   }
 
   @override
   bool operator ==(covariant ProfileViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.onPlayPressedOverride == onPlayPressedOverride;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^ onPlayPressedOverride.hashCode;
   }
 }
 
@@ -407,24 +418,46 @@ class MatchViewArguments {
 }
 
 class ChainReflexViewArguments {
-  const ChainReflexViewArguments({this.key});
+  const ChainReflexViewArguments({
+    this.key,
+    required this.matchId,
+    required this.playerAddress,
+    required this.opponentAddress,
+    required this.stakeAmount,
+  });
 
   final _i16.Key? key;
 
+  final String matchId;
+
+  final String playerAddress;
+
+  final String opponentAddress;
+
+  final int stakeAmount;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
   }
 
   @override
   bool operator ==(covariant ChainReflexViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.matchId == matchId &&
+        other.playerAddress == playerAddress &&
+        other.opponentAddress == opponentAddress &&
+        other.stakeAmount == stakeAmount;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^
+        matchId.hashCode ^
+        playerAddress.hashCode ^
+        opponentAddress.hashCode ^
+        stakeAmount.hashCode;
   }
 }
 
@@ -613,6 +646,7 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> navigateToProfileView({
     _i16.Key? key,
+    void Function()? onPlayPressedOverride,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -621,7 +655,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.profileView,
-      arguments: ProfileViewArguments(key: key),
+      arguments: ProfileViewArguments(
+        key: key,
+        onPlayPressedOverride: onPlayPressedOverride,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -685,6 +722,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> navigateToChainReflexView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -693,7 +734,13 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.chainReflexView,
-      arguments: ChainReflexViewArguments(key: key),
+      arguments: ChainReflexViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -865,6 +912,7 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> replaceWithProfileView({
     _i16.Key? key,
+    void Function()? onPlayPressedOverride,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -873,7 +921,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.profileView,
-      arguments: ProfileViewArguments(key: key),
+      arguments: ProfileViewArguments(
+        key: key,
+        onPlayPressedOverride: onPlayPressedOverride,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -937,6 +988,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> replaceWithChainReflexView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -945,7 +1000,13 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.chainReflexView,
-      arguments: ChainReflexViewArguments(key: key),
+      arguments: ChainReflexViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
