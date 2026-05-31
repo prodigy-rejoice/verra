@@ -5,9 +5,11 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../app/app.locator.dart';
 import '../../app/app.logger.dart';
 import '../../app/app.router.dart';
+import '../../repositories/player_repository.dart';
 
 class SplashViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
+  final PlayerRepository _playerRepository = locator<PlayerRepository>();
   final Logger _logger = getLogger('SplashViewModel');
 
   static const String _walletAddressKey = 'verra_wallet_address';
@@ -16,12 +18,26 @@ class SplashViewModel extends BaseViewModel {
   Future<void> init() async {
     _logger.i('Splash initialized');
     final stopwatch = Stopwatch()..start();
-    final savedAddress = await _readSavedWalletAddress();
+    final destination = await _resolveDestination();
     final elapsed = stopwatch.elapsed;
     if (elapsed < _minimumSplashDuration) {
       await Future<void>.delayed(_minimumSplashDuration - elapsed);
     }
-    await _routeFromSession(savedAddress);
+    _logger.i('Routing to $destination');
+    await _navigationService.replaceWith(destination);
+  }
+
+  Future<String> _resolveDestination() async {
+    try {
+      final address = await _readSavedWalletAddress();
+      if (address == null || address.isEmpty) return Routes.authView;
+      final exists = await _playerRepository.hasProfile(address);
+      _logger.d('Profile exists: $exists');
+      return exists ? Routes.homeView : Routes.authView;
+    } catch (e, stack) {
+      _logger.e('Splash routing error', error: e, stackTrace: stack);
+      return Routes.authView;
+    }
   }
 
   Future<String?> _readSavedWalletAddress() async {
@@ -34,13 +50,5 @@ class SplashViewModel extends BaseViewModel {
       _logger.e('Failed to read saved wallet', error: e, stackTrace: stack);
       return null;
     }
-  }
-
-  Future<void> _routeFromSession(String? walletAddress) async {
-    final destination = walletAddress == null || walletAddress.isEmpty
-        ? Routes.authView
-        : Routes.homeView;
-    _logger.i('Routing to $destination');
-    await _navigationService.replaceWith(destination);
   }
 }
