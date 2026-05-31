@@ -6,6 +6,7 @@ import '../../app/app.locator.dart';
 import '../../app/app.logger.dart';
 import '../../app/app.router.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/constants/sui_constants.dart';
 import '../../core/exceptions/verra_exception.dart';
 import '../../core/extensions/string_extensions.dart';
 import '../../models/player_profile.dart';
@@ -56,7 +57,14 @@ class HomeViewModel extends BaseViewModel {
         setError(AppStrings.sessionExpired);
         return;
       }
-      _profile = await _playerRepository.getProfile(_walletAddress!);
+      _profile = await _playerRepository.getProfile(_walletAddress!) ??
+          PlayerProfile(
+            walletAddress: _walletAddress!,
+            repScore: SuiConstants.startingRepScore,
+            wins: 0,
+            losses: 0,
+            challengesCompleted: 0,
+          );
       _logger.d('Profile loaded — rep ${_profile?.repScore}');
       notifyListeners();
     } on VerraException catch (e) {
