@@ -31,11 +31,16 @@ class SuiService {
       final objectId =
           (data.first as Map<String, dynamic>)['data']['objectId'] as String;
       return _fetchProfile(objectId, walletAddress);
-    } on VerraException {
-      rethrow;
     } catch (e, stack) {
-      _logger.e('Failed to fetch profile', error: e, stackTrace: stack);
-      throw SuiException('Failed to read player profile.', cause: e);
+      // TEST FALLBACK — remove when zkLogin is wired
+      _logger.w('Profile fetch failed — returning test fallback', error: e, stackTrace: stack);
+      return PlayerProfile(
+        walletAddress: walletAddress,
+        repScore: 1000,
+        wins: 0,
+        losses: 0,
+        challengesCompleted: 0,
+      );
     }
   }
 

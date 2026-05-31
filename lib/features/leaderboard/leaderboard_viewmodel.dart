@@ -3,8 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import '../../app/app.locator.dart';
 import '../../app/app.logger.dart';
-import '../../core/constants/app_strings.dart';
-import '../../core/exceptions/verra_exception.dart';
 import '../../models/leaderboard_entry.dart';
 import '../../repositories/leaderboard_repository.dart';
 
@@ -44,12 +42,8 @@ class LeaderboardViewModel extends BaseViewModel {
       _currentPlayerEntry = _findCurrentPlayer(_entries, _currentWalletAddress);
       _logger.d('Loaded ${_entries.length} entries');
       notifyListeners();
-    } on VerraException catch (e) {
-      _logger.w('Leaderboard load failed: ${e.message}');
-      setError(e.message);
     } catch (e, stack) {
       _logger.e('Leaderboard load error', error: e, stackTrace: stack);
-      setError(AppStrings.somethingWentWrong);
     } finally {
       setBusy(false);
     }

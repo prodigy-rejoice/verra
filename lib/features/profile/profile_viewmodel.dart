@@ -7,8 +7,7 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../app/app.locator.dart';
 import '../../app/app.logger.dart';
 import '../../app/app.router.dart';
-import '../../core/constants/app_strings.dart';
-import '../../core/exceptions/verra_exception.dart';
+import '../../core/constants/sui_constants.dart';
 import '../../models/player_profile.dart';
 import '../../repositories/player_repository.dart';
 
@@ -34,23 +33,26 @@ class ProfileViewModel extends BaseViewModel {
     _logger.i('Loading profile');
     try {
       final walletAddress = await _readSavedWalletAddress();
-      if (walletAddress == null) {
-        setError(AppStrings.sessionExpired);
-        return;
+      if (walletAddress != null) {
+        _profile = await _playerRepository.getProfile(walletAddress) ??
+            _fallbackProfile(walletAddress);
+        _logger.d('Profile loaded — rep ${_profile?.repScore}');
       }
-      _profile = await _playerRepository.getProfile(walletAddress);
-      _logger.d('Profile loaded — rep ${_profile?.repScore}');
       notifyListeners();
-    } on VerraException catch (e) {
-      _logger.w('Profile load failed: ${e.message}');
-      setError(e.message);
     } catch (e, stack) {
       _logger.e('Profile load error', error: e, stackTrace: stack);
-      setError(AppStrings.somethingWentWrong);
     } finally {
       setBusy(false);
     }
   }
+
+  PlayerProfile _fallbackProfile(String walletAddress) => PlayerProfile(
+        walletAddress: walletAddress,
+        repScore: SuiConstants.startingRepScore,
+        wins: 0,
+        losses: 0,
+        challengesCompleted: 0,
+      );
 
   Future<void> refresh() => _loadProfile();
 

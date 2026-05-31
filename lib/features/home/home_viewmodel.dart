@@ -5,9 +5,7 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../app/app.locator.dart';
 import '../../app/app.logger.dart';
 import '../../app/app.router.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/constants/sui_constants.dart';
-import '../../core/exceptions/verra_exception.dart';
 import '../../core/extensions/string_extensions.dart';
 import '../../models/player_profile.dart';
 import '../../repositories/player_repository.dart';
@@ -53,30 +51,30 @@ class HomeViewModel extends BaseViewModel {
     setBusy(true);
     try {
       _walletAddress = await _readSavedWalletAddress();
-      if (_walletAddress == null) {
-        setError(AppStrings.sessionExpired);
-        return;
+      if (_walletAddress != null) {
+        _profile = await _playerRepository.getProfile(_walletAddress!) ??
+            _fallbackProfile(_walletAddress!);
+        _logger.d('Profile loaded — rep ${_profile?.repScore}');
       }
-      _profile = await _playerRepository.getProfile(_walletAddress!) ??
-          PlayerProfile(
-            walletAddress: _walletAddress!,
-            repScore: SuiConstants.startingRepScore,
-            wins: 0,
-            losses: 0,
-            challengesCompleted: 0,
-          );
-      _logger.d('Profile loaded — rep ${_profile?.repScore}');
       notifyListeners();
-    } on VerraException catch (e) {
-      _logger.w('Home profile load failed: ${e.message}');
-      setError(e.message);
     } catch (e, stack) {
       _logger.e('Home profile load error', error: e, stackTrace: stack);
-      setError(AppStrings.somethingWentWrong);
+      if (_walletAddress != null) {
+        _profile = _fallbackProfile(_walletAddress!);
+        notifyListeners();
+      }
     } finally {
       setBusy(false);
     }
   }
+
+  PlayerProfile _fallbackProfile(String walletAddress) => PlayerProfile(
+        walletAddress: walletAddress,
+        repScore: SuiConstants.startingRepScore,
+        wins: 0,
+        losses: 0,
+        challengesCompleted: 0,
+      );
 
   Future<void> refresh() => _loadProfile();
 
