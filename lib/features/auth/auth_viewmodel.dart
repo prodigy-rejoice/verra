@@ -8,10 +8,12 @@ import '../../app/app.router.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/exceptions/verra_exception.dart';
 import '../../core/utils/nickname_generator.dart';
+import '../../repositories/player_repository.dart';
 import '../../services/zklogin_service.dart';
 
 class AuthViewModel extends BaseViewModel {
   final ZkLoginService _zkLoginService = locator<ZkLoginService>();
+  final PlayerRepository _playerRepository = locator<PlayerRepository>();
   final NavigationService _navigationService = locator<NavigationService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final Logger _logger = getLogger('AuthViewModel');
@@ -34,6 +36,7 @@ class AuthViewModel extends BaseViewModel {
       final walletAddress = await _zkLoginService.signInWithGoogle();
       await _persistWalletAddress(walletAddress);
       _logger.d('Sign-in succeeded — wallet $walletAddress');
+      await _ensureProfile(walletAddress);
       await _navigationService.replaceWith(Routes.homeView);
     } on VerraException catch (e) {
       _logger.w('Sign-in failed: ${e.message}');
@@ -43,6 +46,22 @@ class AuthViewModel extends BaseViewModel {
       _showError(AppStrings.somethingWentWrong);
     } finally {
       _setSigningIn(false);
+    }
+  }
+
+  Future<void> _ensureProfile(String walletAddress) async {
+    try {
+      final exists = await _playerRepository.hasProfile(walletAddress);
+      if (!exists) {
+        _logger.i('No profile found — creating on-chain profile');
+        await _playerRepository.createProfile();
+        _logger.d('On-chain profile created');
+      }
+    } catch (e, stack) {
+      _logger.e('Profile creation failed', error: e, stackTrace: stack);
+      _snackbarService.showSnackbar(
+        message: 'Profile setup failed. It will be retried on next login.',
+      );
     }
   }
 
