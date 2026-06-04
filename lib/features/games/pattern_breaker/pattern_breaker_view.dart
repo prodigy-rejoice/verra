@@ -69,7 +69,7 @@ class _GameBody extends StatelessWidget {
         children: [
           _ScoreRow(
             playerScore: viewModel.playerScore,
-            opponentScore: viewModel.opponentScore,
+            wrongAnswers: viewModel.wrongAnswers,
           ),
           const SizedBox(height: 16),
           CountdownTimerWidget(
@@ -77,7 +77,7 @@ class _GameBody extends StatelessWidget {
             isUrgent: viewModel.timeRemaining <= 10,
           ),
           const SizedBox(height: 24),
-          _SequenceRow(sequence: viewModel.sequence),
+          _SequenceRow(sequence: viewModel.displaySequence),
           const SizedBox(height: 20),
           Text(
             'What comes next?',
@@ -93,10 +93,10 @@ class _GameBody extends StatelessWidget {
 }
 
 class _ScoreRow extends StatelessWidget {
-  const _ScoreRow({required this.playerScore, required this.opponentScore});
+  const _ScoreRow({required this.playerScore, required this.wrongAnswers});
 
   final int playerScore;
-  final int opponentScore;
+  final int wrongAnswers;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class _ScoreRow extends StatelessWidget {
         Text('VS', style: AppTextStyles.bodyLarge),
         const Spacer(),
         Text(
-          '$opponentScore',
+          '$wrongAnswers',
           style: AppTextStyles.headlineLarge.copyWith(color: AppColors.error),
         ),
       ],
@@ -127,20 +127,14 @@ class _SequenceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 64,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: sequence.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (_, i) {
-          final isUnknown = i == sequence.length;
-          return _SequenceBox(
-            text: isUnknown ? '?' : sequence[i],
-            highlight: isUnknown,
-          );
-        },
-      ),
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      alignment: WrapAlignment.center,
+      children: [
+        for (final item in sequence) _SequenceBox(text: item, highlight: false),
+        const _SequenceBox(text: '?', highlight: true),
+      ],
     );
   }
 }
@@ -154,7 +148,8 @@ class _SequenceBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 64,
+      width: 48,
+      height: 48,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -166,8 +161,10 @@ class _SequenceBox extends StatelessWidget {
       ),
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: AppTextStyles.titleLarge.copyWith(
           color: highlight ? AppColors.primary : AppColors.textPrimary,
+          fontSize: 12,
         ),
       ),
     );
@@ -181,29 +178,29 @@ class _OptionsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final opts = viewModel.options;
+    final raw = viewModel.options;
+    final display = viewModel.displayOptions;
     return GridView.count(
       crossAxisCount: 2,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
       childAspectRatio: 1.5,
       physics: const NeverScrollableScrollPhysics(),
-      children: opts
-          .map(
-            (o) => _OptionCard(
-              option: o,
-              feedback: _feedbackFor(o),
-              onTap: () => viewModel.onOptionSelected(o),
-            ),
-          )
-          .toList(),
+      children: List.generate(
+        raw.length,
+        (i) => _OptionCard(
+          option: display[i],
+          feedback: _feedbackFor(raw[i]),
+          onTap: () => viewModel.onOptionSelected(raw[i]),
+        ),
+      ),
     );
   }
 
-  _OptionFeedback _feedbackFor(String option) {
+  _OptionFeedback _feedbackFor(String rawOption) {
     if (!viewModel.hasAnswered) return _OptionFeedback.none;
-    final isCorrect = option == viewModel.correctAnswer;
-    final isSelected = option == viewModel.selectedAnswer;
+    final isCorrect = rawOption == viewModel.correctAnswer;
+    final isSelected = rawOption == viewModel.selectedAnswer;
     if (isCorrect) return _OptionFeedback.correct;
     if (isSelected) return _OptionFeedback.wrong;
     return _OptionFeedback.none;

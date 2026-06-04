@@ -18,9 +18,17 @@ class PatternBreakerViewModel extends BaseViewModel {
   final Logger _logger = getLogger('PatternBreakerViewModel');
   final Random _random = Random();
 
-  static const int _gameDuration = 120;
+  static const int _gameDuration = 60;
   static const int _feedbackMillis = 1000;
   static const int _winScore = 10;
+
+  static const Map<String, String> _displaySymbols = {
+    'circle': '⬤',
+    'square': '■',
+    'triangle': '▲',
+    'red': '🔴',
+    'blue': '🔵',
+  };
 
   static const List<Map<String, dynamic>> _patterns = [
     {'seq': ['2', '4', '8', '16'], 'answer': '32'},
@@ -64,8 +72,17 @@ class PatternBreakerViewModel extends BaseViewModel {
   List<String> _options = [];
   List<String> get options => _options;
 
+  List<String> get displaySequence => _sequence.map(_toDisplay).toList();
+
+  List<String> get displayOptions => _options.map(_toDisplay).toList();
+
+  String _toDisplay(String raw) => _displaySymbols[raw] ?? raw;
+
   int _playerScore = 0;
   int get playerScore => _playerScore;
+
+  int _wrongAnswers = 0;
+  int get wrongAnswers => _wrongAnswers;
 
   int _opponentScore = 0;
   int get opponentScore => _opponentScore;
@@ -124,6 +141,8 @@ class PatternBreakerViewModel extends BaseViewModel {
     _lastAnswerCorrect = correct;
     if (correct) {
       _playerScore++;
+    } else {
+      _wrongAnswers++;
     }
     _syncScore();
     _logger.d('Pattern answer ${correct ? 'right' : 'wrong'}');
