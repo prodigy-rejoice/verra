@@ -189,39 +189,59 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i11.CryptoTriviaView: (data) {
-      final args = data.getArgs<CryptoTriviaViewArguments>(
-        orElse: () => const CryptoTriviaViewArguments(),
-      );
+      final args = data.getArgs<CryptoTriviaViewArguments>(nullOk: false);
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i11.CryptoTriviaView(key: args.key),
+        builder: (context) => _i11.CryptoTriviaView(
+          key: args.key,
+          matchId: args.matchId,
+          playerAddress: args.playerAddress,
+          opponentAddress: args.opponentAddress,
+          stakeAmount: args.stakeAmount,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     _i12.WordStakeView: (data) {
-      final args = data.getArgs<WordStakeViewArguments>(
-        orElse: () => const WordStakeViewArguments(),
-      );
+      final args = data.getArgs<WordStakeViewArguments>(nullOk: false);
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i12.WordStakeView(key: args.key),
+        builder: (context) => _i12.WordStakeView(
+          key: args.key,
+          matchId: args.matchId,
+          playerAddress: args.playerAddress,
+          opponentAddress: args.opponentAddress,
+          stakeAmount: args.stakeAmount,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     _i13.PatternBreakerView: (data) {
-      final args = data.getArgs<PatternBreakerViewArguments>(
-        orElse: () => const PatternBreakerViewArguments(),
-      );
+      final args = data.getArgs<PatternBreakerViewArguments>(nullOk: false);
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i13.PatternBreakerView(key: args.key),
+        builder: (context) => _i13.PatternBreakerView(
+          key: args.key,
+          matchId: args.matchId,
+          playerAddress: args.playerAddress,
+          opponentAddress: args.opponentAddress,
+          stakeAmount: args.stakeAmount,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     _i14.MathDuelView: (data) {
-      final args = data.getArgs<MathDuelViewArguments>(
-        orElse: () => const MathDuelViewArguments(),
-      );
+      final args = data.getArgs<MathDuelViewArguments>(nullOk: false);
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i14.MathDuelView(key: args.key),
+        builder: (context) => _i14.MathDuelView(
+          key: args.key,
+          matchId: args.matchId,
+          playerAddress: args.playerAddress,
+          opponentAddress: args.opponentAddress,
+          stakeAmount: args.stakeAmount,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     _i15.MatchResultView: (data) {
@@ -469,90 +489,178 @@ class ChainReflexViewArguments {
 }
 
 class CryptoTriviaViewArguments {
-  const CryptoTriviaViewArguments({this.key});
+  const CryptoTriviaViewArguments({
+    this.key,
+    required this.matchId,
+    required this.playerAddress,
+    required this.opponentAddress,
+    required this.stakeAmount,
+  });
 
   final _i16.Key? key;
 
+  final String matchId;
+
+  final String playerAddress;
+
+  final String opponentAddress;
+
+  final int stakeAmount;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
   }
 
   @override
   bool operator ==(covariant CryptoTriviaViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.matchId == matchId &&
+        other.playerAddress == playerAddress &&
+        other.opponentAddress == opponentAddress &&
+        other.stakeAmount == stakeAmount;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^
+        matchId.hashCode ^
+        playerAddress.hashCode ^
+        opponentAddress.hashCode ^
+        stakeAmount.hashCode;
   }
 }
 
 class WordStakeViewArguments {
-  const WordStakeViewArguments({this.key});
+  const WordStakeViewArguments({
+    this.key,
+    required this.matchId,
+    required this.playerAddress,
+    required this.opponentAddress,
+    required this.stakeAmount,
+  });
 
   final _i16.Key? key;
 
+  final String matchId;
+
+  final String playerAddress;
+
+  final String opponentAddress;
+
+  final int stakeAmount;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
   }
 
   @override
   bool operator ==(covariant WordStakeViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.matchId == matchId &&
+        other.playerAddress == playerAddress &&
+        other.opponentAddress == opponentAddress &&
+        other.stakeAmount == stakeAmount;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^
+        matchId.hashCode ^
+        playerAddress.hashCode ^
+        opponentAddress.hashCode ^
+        stakeAmount.hashCode;
   }
 }
 
 class PatternBreakerViewArguments {
-  const PatternBreakerViewArguments({this.key});
+  const PatternBreakerViewArguments({
+    this.key,
+    required this.matchId,
+    required this.playerAddress,
+    required this.opponentAddress,
+    required this.stakeAmount,
+  });
 
   final _i16.Key? key;
 
+  final String matchId;
+
+  final String playerAddress;
+
+  final String opponentAddress;
+
+  final int stakeAmount;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
   }
 
   @override
   bool operator ==(covariant PatternBreakerViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.matchId == matchId &&
+        other.playerAddress == playerAddress &&
+        other.opponentAddress == opponentAddress &&
+        other.stakeAmount == stakeAmount;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^
+        matchId.hashCode ^
+        playerAddress.hashCode ^
+        opponentAddress.hashCode ^
+        stakeAmount.hashCode;
   }
 }
 
 class MathDuelViewArguments {
-  const MathDuelViewArguments({this.key});
+  const MathDuelViewArguments({
+    this.key,
+    required this.matchId,
+    required this.playerAddress,
+    required this.opponentAddress,
+    required this.stakeAmount,
+  });
 
   final _i16.Key? key;
 
+  final String matchId;
+
+  final String playerAddress;
+
+  final String opponentAddress;
+
+  final int stakeAmount;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
   }
 
   @override
   bool operator ==(covariant MathDuelViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.matchId == matchId &&
+        other.playerAddress == playerAddress &&
+        other.opponentAddress == opponentAddress &&
+        other.stakeAmount == stakeAmount;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^
+        matchId.hashCode ^
+        playerAddress.hashCode ^
+        opponentAddress.hashCode ^
+        stakeAmount.hashCode;
   }
 }
 
@@ -761,6 +869,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> navigateToCryptoTriviaView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -769,7 +881,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.cryptoTriviaView,
-      arguments: CryptoTriviaViewArguments(key: key),
+      arguments: CryptoTriviaViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -779,6 +897,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> navigateToWordStakeView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -787,7 +909,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.wordStakeView,
-      arguments: WordStakeViewArguments(key: key),
+      arguments: WordStakeViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -797,6 +925,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> navigateToPatternBreakerView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -805,7 +937,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.patternBreakerView,
-      arguments: PatternBreakerViewArguments(key: key),
+      arguments: PatternBreakerViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -815,6 +953,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> navigateToMathDuelView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -823,7 +965,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.mathDuelView,
-      arguments: MathDuelViewArguments(key: key),
+      arguments: MathDuelViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -1031,6 +1179,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> replaceWithCryptoTriviaView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1039,7 +1191,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.cryptoTriviaView,
-      arguments: CryptoTriviaViewArguments(key: key),
+      arguments: CryptoTriviaViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -1049,6 +1207,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> replaceWithWordStakeView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1057,7 +1219,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.wordStakeView,
-      arguments: WordStakeViewArguments(key: key),
+      arguments: WordStakeViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -1067,6 +1235,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> replaceWithPatternBreakerView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1075,7 +1247,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.patternBreakerView,
-      arguments: PatternBreakerViewArguments(key: key),
+      arguments: PatternBreakerViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -1085,6 +1263,10 @@ extension NavigatorStateExtension on _i18.NavigationService {
 
   Future<dynamic> replaceWithMathDuelView({
     _i16.Key? key,
+    required String matchId,
+    required String playerAddress,
+    required String opponentAddress,
+    required int stakeAmount,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1093,7 +1275,13 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.mathDuelView,
-      arguments: MathDuelViewArguments(key: key),
+      arguments: MathDuelViewArguments(
+        key: key,
+        matchId: matchId,
+        playerAddress: playerAddress,
+        opponentAddress: opponentAddress,
+        stakeAmount: stakeAmount,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
