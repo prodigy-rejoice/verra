@@ -15,6 +15,7 @@ enum ChainReflexStatus { waiting, playing, finished }
 class ChainReflexViewModel extends BaseViewModel {
   final SupabaseService _supabaseService = locator<SupabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
   final Logger _logger = getLogger('ChainReflexViewModel');
   final Random _random = Random();
 
@@ -31,6 +32,9 @@ class ChainReflexViewModel extends BaseViewModel {
   String? _matchId;
   int _stakeAmount = 0;
   bool _isChallenger = true;
+  bool _hasResigned = false;
+  bool _isPractice = false;
+  bool get isPractice => _isPractice;
 
   Map<String, dynamic> _currentTarget = {};
   Map<String, dynamic> get currentTarget => _currentTarget;
@@ -40,6 +44,9 @@ class ChainReflexViewModel extends BaseViewModel {
 
   int _playerScore = 0;
   int get playerScore => _playerScore;
+
+  int _wrongTaps = 0;
+  int get wrongTaps => _wrongTaps;
 
   int _opponentScore = 0;
   int get opponentScore => _opponentScore;
@@ -62,19 +69,38 @@ class ChainReflexViewModel extends BaseViewModel {
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
   }) {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
+    _isPractice = isPractice;
     // TODO: set from match data when real matchmaking is wired
     _isChallenger = true;
-    _logger.i('Chain Reflex starting — match $matchId');
-    if (matchId.isNotEmpty) {
+    _logger.i('Chain Reflex starting — match $matchId (practice=$isPractice)');
+    if (!_isPractice && matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
     }
     _generateNewTarget();
     _startTimer();
     _gameStatus = ChainReflexStatus.playing;
     notifyListeners();
+  }
+
+  Future<void> resign() async {
+    if (_gameStatus != ChainReflexStatus.playing) return;
+    if (_hasResigned) return;
+    final response = await _dialogService.showConfirmationDialog(
+      title: 'Resign?',
+      description:
+          'You will forfeit your staked rep to your opponent. This cannot be undone.',
+      confirmationTitle: 'Resign',
+      cancelTitle: 'Cancel',
+    );
+    if (response?.confirmed == true) {
+      _hasResigned = true;
+      _logger.i('Player resigned');
+      _endGame(false);
+    }
   }
 
   void onTargetTap(String shape, String color) {
@@ -84,8 +110,11 @@ class ChainReflexViewModel extends BaseViewModel {
     if (correct) {
       _playerScore++;
       _logger.d('Correct tap — score $_playerScore');
-      _generateNewTarget();
+    } else {
+      _wrongTaps++;
+      _logger.d('Wrong tap — total $_wrongTaps');
     }
+    _generateNewTarget();
     _syncScore();
     _checkWinCondition();
   }
@@ -146,7 +175,7 @@ class ChainReflexViewModel extends BaseViewModel {
 
   void _endGame(bool playerWon) {
     _timer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     _isWinner = playerWon;
@@ -156,6 +185,7 @@ class ChainReflexViewModel extends BaseViewModel {
   }
 
   Future<void> _syncScore() async {
+    if (_isPractice) return;
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
       final column = _isChallenger ? 'challenger_score' : 'opponent_score';
@@ -175,7 +205,7 @@ class ChainReflexViewModel extends BaseViewModel {
   @override
   void dispose() {
     _timer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     super.dispose();

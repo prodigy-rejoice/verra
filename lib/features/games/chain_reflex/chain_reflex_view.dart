@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -109,7 +111,7 @@ class _ScoreRow extends StatelessWidget {
         Text('VS', style: AppTextStyles.bodyLarge),
         const Spacer(),
         Text(
-          '${viewModel.opponentScore}',
+          '${viewModel.wrongTaps}',
           style: AppTextStyles.headlineLarge.copyWith(
             color: AppColors.error,
           ),
@@ -160,37 +162,98 @@ class _TargetCard extends StatelessWidget {
   final Map<String, dynamic> option;
   final void Function(String shape, String color) onTap;
 
-  static const Map<String, Color> _colorMap = {
-    'red': Color(0xFFEF4444),
-    'blue': Color(0xFF3B82F6),
-    'green': Color(0xFF4ADE80),
-    'yellow': Color(0xFFFACC15),
+  static const Map<String, Color> _shapeColors = {
+    'red': Color(0xFFE24B4A),
+    'blue': Color(0xFF4A90E2),
+    'green': Color(0xFF1D9E75),
+    'yellow': Color(0xFFEF9F27),
   };
 
   @override
   Widget build(BuildContext context) {
     final shape = option['shape'] as String? ?? '';
     final color = option['color'] as String? ?? '';
-    final fill = (_colorMap[color] ?? AppColors.surface).withValues(alpha: 0.7);
+    final fill = _shapeColors[color] ?? AppColors.textPrimary;
     return Expanded(
       child: GestureDetector(
         onTap: () => onTap(shape, color),
         child: Container(
           decoration: BoxDecoration(
-            color: fill,
+            color: AppColors.surfaceElevated,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.border),
           ),
           alignment: Alignment.center,
-          child: Text(
-            shape,
-            style: AppTextStyles.titleLarge,
-            textAlign: TextAlign.center,
-          ),
+          child: _ShapeFigure(shape: shape, color: fill),
         ),
       ),
     );
   }
+}
+
+class _ShapeFigure extends StatelessWidget {
+  const _ShapeFigure({required this.shape, required this.color});
+
+  final String shape;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (shape) {
+      case 'circle':
+        return Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        );
+      case 'square':
+        return Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.zero,
+            color: color,
+          ),
+        );
+      case 'triangle':
+        return CustomPaint(
+          size: const Size(60, 60),
+          painter: _TrianglePainter(color: color),
+        );
+      case 'diamond':
+        return Transform.rotate(
+          angle: pi / 4,
+          child: Container(width: 45, height: 45, color: color),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+}
+
+class _TrianglePainter extends CustomPainter {
+  const _TrianglePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    final path = Path()
+      ..moveTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _TrianglePainter old) => old.color != color;
 }
 
 class _GameOverOverlay extends StatelessWidget {
