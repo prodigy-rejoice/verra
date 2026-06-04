@@ -76,6 +76,12 @@ class _PlayTab extends StatelessWidget {
       profile: profile,
       displayName: viewModel.displayName,
       onFindMatch: viewModel.findMatch,
+      currentRankName: profile.rank.displayName,
+      nextRankName: viewModel.nextRankName,
+      nextRankMinScore: viewModel.nextRankMinScore,
+      rankProgress: viewModel.rankProgress,
+      dailyChallenge: viewModel.dailyChallenge,
+      onDailyChallengeTap: viewModel.onDailyChallengeTap,
     );
   }
 }
@@ -85,11 +91,23 @@ class _PlayContent extends StatelessWidget {
     required this.profile,
     required this.displayName,
     required this.onFindMatch,
+    required this.currentRankName,
+    required this.nextRankName,
+    required this.nextRankMinScore,
+    required this.rankProgress,
+    required this.dailyChallenge,
+    required this.onDailyChallengeTap,
   });
 
   final PlayerProfile profile;
   final String displayName;
   final VoidCallback onFindMatch;
+  final String currentRankName;
+  final String? nextRankName;
+  final int? nextRankMinScore;
+  final double rankProgress;
+  final Map<String, String> dailyChallenge;
+  final VoidCallback onDailyChallengeTap;
 
   @override
   Widget build(BuildContext context) {
@@ -105,12 +123,193 @@ class _PlayContent extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 24),
-          _RepScoreCard(profile: profile),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _RepScoreCard(profile: profile),
+                  const SizedBox(height: 16),
+                  _StatChipRow(profile: profile),
+                  const SizedBox(height: 16),
+                  _RankProgressCard(
+                    currentRankName: currentRankName,
+                    nextRankName: nextRankName,
+                    nextRankMinScore: nextRankMinScore,
+                    repScore: profile.repScore,
+                    progress: rankProgress,
+                  ),
+                  const SizedBox(height: 16),
+                  _DailyChallengeBanner(
+                    data: dailyChallenge,
+                    onTap: onDailyChallengeTap,
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
-          _StatChipRow(profile: profile),
-          const Spacer(),
           VerraButton(label: AppStrings.findMatch, onTap: onFindMatch),
         ],
+      ),
+    );
+  }
+}
+
+class _RankProgressCard extends StatelessWidget {
+  const _RankProgressCard({
+    required this.currentRankName,
+    required this.nextRankName,
+    required this.nextRankMinScore,
+    required this.repScore,
+    required this.progress,
+  });
+
+  final String currentRankName;
+  final String? nextRankName;
+  final int? nextRankMinScore;
+  final int repScore;
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLegend = nextRankName == null || nextRankMinScore == null;
+    return VerraCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (isLegend)
+            Text(
+              'MAX RANK',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textHint,
+              ),
+              textAlign: TextAlign.center,
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  currentRankName,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textHint,
+                  ),
+                ),
+                Text(
+                  nextRankName!,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textHint,
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: SizedBox(
+              height: 6,
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: AppColors.border,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppColors.primary,
+                ),
+                minHeight: 6,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            isLegend
+                ? 'You have reached the highest rank'
+                : '${(nextRankMinScore! - repScore).clamp(0, 1 << 31)} rep to $nextRankName',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyChallengeBanner extends StatelessWidget {
+  const _DailyChallengeBanner({required this.data, required this.onTap});
+
+  final Map<String, String> data;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 3, color: AppColors.primary),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'DAILY CHALLENGE',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            data['bonus'] ?? '',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.success,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        data['label'] ?? '',
+                        style: AppTextStyles.headlineMedium,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        data['description'] ?? '',
+                        style: AppTextStyles.bodyMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: TextButton(
+                          onPressed: onTap,
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.primary,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text('Play Now →'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
