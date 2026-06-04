@@ -30,6 +30,7 @@ class ChainReflexViewModel extends BaseViewModel {
 
   String? _matchId;
   int _stakeAmount = 0;
+  bool _isChallenger = true;
 
   Map<String, dynamic> _currentTarget = {};
   Map<String, dynamic> get currentTarget => _currentTarget;
@@ -64,6 +65,8 @@ class ChainReflexViewModel extends BaseViewModel {
   }) {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
+    // TODO: set from match data when real matchmaking is wired
+    _isChallenger = true;
     _logger.i('Chain Reflex starting — match $matchId');
     if (matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
@@ -76,12 +79,13 @@ class ChainReflexViewModel extends BaseViewModel {
 
   void onTargetTap(String shape, String color) {
     if (_gameStatus != ChainReflexStatus.playing) return;
-    if (shape != _currentTarget['shape'] || color != _currentTarget['color']) {
-      return;
+    final correct = shape == _currentTarget['shape'] &&
+        color == _currentTarget['color'];
+    if (correct) {
+      _playerScore++;
+      _logger.d('Correct tap — score $_playerScore');
+      _generateNewTarget();
     }
-    _playerScore++;
-    _logger.d('Correct tap — score $_playerScore');
-    _generateNewTarget();
     _syncScore();
     _checkWinCondition();
   }
@@ -119,9 +123,11 @@ class ChainReflexViewModel extends BaseViewModel {
 
   void _onMatchUpdate(Map<String, dynamic> update) {
     _logger.d('Match update received');
-    final score = update['opponent_score'];
-    if (score is int && score != _opponentScore) {
-      _opponentScore = score;
+    final opponentColumn =
+        _isChallenger ? 'opponent_score' : 'challenger_score';
+    final opponentScore = update[opponentColumn] as int? ?? 0;
+    if (opponentScore != _opponentScore) {
+      _opponentScore = opponentScore;
       notifyListeners();
       _checkWinCondition();
     }
@@ -152,9 +158,10 @@ class ChainReflexViewModel extends BaseViewModel {
   Future<void> _syncScore() async {
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
+      final column = _isChallenger ? 'challenger_score' : 'opponent_score';
       await _supabaseService.updateMatchState(
         _matchId!,
-        {'challenger_score': _playerScore},
+        {column: _playerScore},
       );
     } catch (e, stack) {
       _logger.e('Score sync failed', error: e, stackTrace: stack);
