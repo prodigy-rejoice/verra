@@ -107,17 +107,59 @@ class ChallengeLobbyViewModel extends BaseViewModel {
         _selectedChallengeType!.key,
       );
       _logger.d('Match created — id $matchId');
-      await _navigationService.navigateToChainReflexView(
-        matchId: matchId,
-        playerAddress: _walletAddress!,
-        opponentAddress: _opponentTestAddress,
-        stakeAmount: _selectedStake!,
-      );
+      await _routeToGame(matchId);
     } catch (e, stack) {
       _logger.e('Find match failed', error: e, stackTrace: stack);
       _snackbarService.showSnackbar(message: e.toString());
       _isSearching = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> _routeToGame(String matchId) async {
+    final stake = _selectedStake!;
+    final player = _walletAddress!;
+    switch (_selectedChallengeType!) {
+      case ChallengeType.chainReflex:
+        await _navigationService.navigateToChainReflexView(
+          matchId: matchId,
+          playerAddress: player,
+          opponentAddress: _opponentTestAddress,
+          stakeAmount: stake,
+        );
+        break;
+      case ChallengeType.cryptoTrivia:
+        await _navigationService.navigateToCryptoTriviaView(
+          matchId: matchId,
+          playerAddress: player,
+          opponentAddress: _opponentTestAddress,
+          stakeAmount: stake,
+        );
+        break;
+      case ChallengeType.mathDuel:
+        await _navigationService.navigateToMathDuelView(
+          matchId: matchId,
+          playerAddress: player,
+          opponentAddress: _opponentTestAddress,
+          stakeAmount: stake,
+        );
+        break;
+      case ChallengeType.wordStake:
+        await _navigationService.navigateToWordStakeView(
+          matchId: matchId,
+          playerAddress: player,
+          opponentAddress: _opponentTestAddress,
+          stakeAmount: stake,
+        );
+        break;
+      case ChallengeType.patternBreaker:
+        await _navigationService.navigateToPatternBreakerView(
+          matchId: matchId,
+          playerAddress: player,
+          opponentAddress: _opponentTestAddress,
+          stakeAmount: stake,
+        );
+        break;
     }
   }
 
