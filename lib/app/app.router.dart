@@ -9,7 +9,8 @@
 import 'package:flutter/material.dart' as _i16;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i17;
+import 'package:stacked_services/stacked_services.dart' as _i18;
+import 'package:verra/core/enums/challenge_type.dart' as _i17;
 import 'package:verra/features/auth/auth_view.dart' as _i4;
 import 'package:verra/features/challenge_lobby/challenge_lobby_view.dart'
     as _i8;
@@ -157,7 +158,10 @@ class StackedRouter extends _i1.RouterBase {
         orElse: () => const ChallengeLobbyViewArguments(),
       );
       return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i8.ChallengeLobbyView(key: args.key),
+        builder: (context) => _i8.ChallengeLobbyView(
+          key: args.key,
+          initialChallengeType: args.initialChallengeType,
+        ),
         settings: data,
       );
     },
@@ -374,24 +378,27 @@ class LeaderboardViewArguments {
 }
 
 class ChallengeLobbyViewArguments {
-  const ChallengeLobbyViewArguments({this.key});
+  const ChallengeLobbyViewArguments({this.key, this.initialChallengeType});
 
   final _i16.Key? key;
 
+  final _i17.ChallengeType? initialChallengeType;
+
   @override
   String toString() {
-    return '{"key": "$key"}';
+    return '{"key": "$key", "initialChallengeType": "$initialChallengeType"}';
   }
 
   @override
   bool operator ==(covariant ChallengeLobbyViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key;
+    return other.key == key &&
+        other.initialChallengeType == initialChallengeType;
   }
 
   @override
   int get hashCode {
-    return key.hashCode;
+    return key.hashCode ^ initialChallengeType.hashCode;
   }
 }
 
@@ -571,7 +578,7 @@ class MatchResultViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i17.NavigationService {
+extension NavigatorStateExtension on _i18.NavigationService {
   Future<dynamic> navigateToSplashView({
     _i16.Key? key,
     int? routerId,
@@ -686,6 +693,7 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> navigateToChallengeLobbyView({
     _i16.Key? key,
+    _i17.ChallengeType? initialChallengeType,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -694,7 +702,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.challengeLobbyView,
-      arguments: ChallengeLobbyViewArguments(key: key),
+      arguments: ChallengeLobbyViewArguments(
+        key: key,
+        initialChallengeType: initialChallengeType,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -952,6 +963,7 @@ extension NavigatorStateExtension on _i17.NavigationService {
 
   Future<dynamic> replaceWithChallengeLobbyView({
     _i16.Key? key,
+    _i17.ChallengeType? initialChallengeType,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -960,7 +972,10 @@ extension NavigatorStateExtension on _i17.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.challengeLobbyView,
-      arguments: ChallengeLobbyViewArguments(key: key),
+      arguments: ChallengeLobbyViewArguments(
+        key: key,
+        initialChallengeType: initialChallengeType,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

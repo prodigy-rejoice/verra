@@ -47,8 +47,12 @@ class ChallengeLobbyViewModel extends BaseViewModel {
     return stake <= maxStake;
   }
 
-  Future<void> init() async {
+  Future<void> init({ChallengeType? initialChallengeType}) async {
     _logger.i('Challenge lobby initialized');
+    if (initialChallengeType != null) {
+      _selectedChallengeType = initialChallengeType;
+      _logger.d('Pre-selected challenge — ${initialChallengeType.key}');
+    }
     await _loadProfile();
   }
 

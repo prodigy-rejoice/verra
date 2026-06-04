@@ -10,7 +10,9 @@ import '../../widgets/common/verra_loader.dart';
 import 'challenge_lobby_viewmodel.dart';
 
 class ChallengeLobbyView extends StackedView<ChallengeLobbyViewModel> {
-  const ChallengeLobbyView({super.key});
+  const ChallengeLobbyView({super.key, this.initialChallengeType});
+
+  final ChallengeType? initialChallengeType;
 
   @override
   Widget builder(
@@ -111,7 +113,8 @@ class ChallengeLobbyView extends StackedView<ChallengeLobbyViewModel> {
       ChallengeLobbyViewModel();
 
   @override
-  void onViewModelReady(ChallengeLobbyViewModel viewModel) => viewModel.init();
+  void onViewModelReady(ChallengeLobbyViewModel viewModel) =>
+      viewModel.init(initialChallengeType: initialChallengeType);
 }
 
 class _ChallengeGrid extends StatelessWidget {
