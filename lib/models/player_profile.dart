@@ -22,7 +22,7 @@ class PlayerProfile {
 
   PlayerRank get rank => PlayerRank.fromScore(repScore);
 
-  int get maxStake => (repScore * SuiConstants.maxStakePercent) ~/ 100;
+  int get maxStake => (repScore * SuiConstants.maxStakePercent).toInt();
 
   int get totalMatches => wins + losses;
 
