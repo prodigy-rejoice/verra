@@ -75,7 +75,8 @@ class _PlayTab extends StatelessWidget {
     return _PlayContent(
       profile: profile,
       displayName: viewModel.displayName,
-      onFindMatch: viewModel.findMatch,
+      onPractice: viewModel.navigateToPracticeLobby,
+      onPlayOnline: viewModel.navigateToPlayOnline,
       currentRankName: profile.rank.displayName,
       nextRankName: viewModel.nextRankName,
       nextRankMinScore: viewModel.nextRankMinScore,
@@ -90,7 +91,8 @@ class _PlayContent extends StatelessWidget {
   const _PlayContent({
     required this.profile,
     required this.displayName,
-    required this.onFindMatch,
+    required this.onPractice,
+    required this.onPlayOnline,
     required this.currentRankName,
     required this.nextRankName,
     required this.nextRankMinScore,
@@ -101,7 +103,8 @@ class _PlayContent extends StatelessWidget {
 
   final PlayerProfile profile;
   final String displayName;
-  final VoidCallback onFindMatch;
+  final VoidCallback onPractice;
+  final VoidCallback onPlayOnline;
   final String currentRankName;
   final String? nextRankName;
   final int? nextRankMinScore;
@@ -150,7 +153,17 @@ class _PlayContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          VerraButton(label: AppStrings.findMatch, onTap: onFindMatch),
+          Row(
+            children: [
+              Expanded(
+                child: _OutlinedButton(label: 'Practice', onTap: onPractice),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: VerraButton(label: 'Play Online', onTap: onPlayOnline),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -389,6 +402,37 @@ class _StatChip extends StatelessWidget {
           const SizedBox(height: 4),
           Text(label, style: AppTextStyles.caption),
         ],
+      ),
+    );
+  }
+}
+
+class _OutlinedButton extends StatelessWidget {
+  const _OutlinedButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          height: 54,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.primary, width: 1.5),
+          ),
+          child: Text(
+            label,
+            style: AppTextStyles.labelLarge.copyWith(color: AppColors.primary),
+          ),
+        ),
       ),
     );
   }

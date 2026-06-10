@@ -183,7 +183,12 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> refresh() => _loadProfile();
 
-  Future<void> findMatch() async {
+  Future<void> navigateToPracticeLobby() async {
+    _logger.i('Navigating to practice lobby');
+    await _navigationService.navigateTo(Routes.practiceLobbyView);
+  }
+
+  Future<void> navigateToPlayOnline() async {
     _logger.i('Navigating to challenge lobby');
     await _navigationService.navigateTo(Routes.challengeLobbyView);
   }

@@ -6,27 +6,29 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i16;
+import 'package:flutter/material.dart' as _i18;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i18;
-import 'package:verra/core/enums/challenge_type.dart' as _i17;
+import 'package:stacked_services/stacked_services.dart' as _i20;
+import 'package:verra/core/enums/challenge_type.dart' as _i19;
 import 'package:verra/features/auth/auth_view.dart' as _i4;
 import 'package:verra/features/challenge_lobby/challenge_lobby_view.dart'
-    as _i8;
-import 'package:verra/features/games/chain_reflex/chain_reflex_view.dart'
     as _i10;
+import 'package:verra/features/games/chain_reflex/chain_reflex_view.dart'
+    as _i12;
 import 'package:verra/features/games/crypto_trivia/crypto_trivia_view.dart'
-    as _i11;
-import 'package:verra/features/games/math_duel/math_duel_view.dart' as _i14;
-import 'package:verra/features/games/pattern_breaker/pattern_breaker_view.dart'
     as _i13;
-import 'package:verra/features/games/word_stake/word_stake_view.dart' as _i12;
+import 'package:verra/features/games/math_duel/math_duel_view.dart' as _i16;
+import 'package:verra/features/games/pattern_breaker/pattern_breaker_view.dart'
+    as _i15;
+import 'package:verra/features/games/word_stake/word_stake_view.dart' as _i14;
 import 'package:verra/features/home/home_view.dart' as _i5;
 import 'package:verra/features/leaderboard/leaderboard_view.dart' as _i7;
-import 'package:verra/features/match/match_view.dart' as _i9;
-import 'package:verra/features/match_result/match_result_view.dart' as _i15;
+import 'package:verra/features/match/match_view.dart' as _i11;
+import 'package:verra/features/match_result/match_result_view.dart' as _i17;
 import 'package:verra/features/onboarding/onboarding_view.dart' as _i3;
+import 'package:verra/features/play_mode/play_mode_view.dart' as _i8;
+import 'package:verra/features/practice_lobby/practice_lobby_view.dart' as _i9;
 import 'package:verra/features/profile/profile_view.dart' as _i6;
 import 'package:verra/features/splash/splash_view.dart' as _i2;
 
@@ -42,6 +44,10 @@ class Routes {
   static const profileView = '/profile-view';
 
   static const leaderboardView = '/leaderboard-view';
+
+  static const playModeView = '/play-mode-view';
+
+  static const practiceLobbyView = '/practice-lobby-view';
 
   static const challengeLobbyView = '/challenge-lobby-view';
 
@@ -66,6 +72,8 @@ class Routes {
     homeView,
     profileView,
     leaderboardView,
+    playModeView,
+    practiceLobbyView,
     challengeLobbyView,
     matchView,
     chainReflexView,
@@ -85,14 +93,16 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(Routes.homeView, page: _i5.HomeView),
     _i1.RouteDef(Routes.profileView, page: _i6.ProfileView),
     _i1.RouteDef(Routes.leaderboardView, page: _i7.LeaderboardView),
-    _i1.RouteDef(Routes.challengeLobbyView, page: _i8.ChallengeLobbyView),
-    _i1.RouteDef(Routes.matchView, page: _i9.MatchView),
-    _i1.RouteDef(Routes.chainReflexView, page: _i10.ChainReflexView),
-    _i1.RouteDef(Routes.cryptoTriviaView, page: _i11.CryptoTriviaView),
-    _i1.RouteDef(Routes.wordStakeView, page: _i12.WordStakeView),
-    _i1.RouteDef(Routes.patternBreakerView, page: _i13.PatternBreakerView),
-    _i1.RouteDef(Routes.mathDuelView, page: _i14.MathDuelView),
-    _i1.RouteDef(Routes.matchResultView, page: _i15.MatchResultView),
+    _i1.RouteDef(Routes.playModeView, page: _i8.PlayModeView),
+    _i1.RouteDef(Routes.practiceLobbyView, page: _i9.PracticeLobbyView),
+    _i1.RouteDef(Routes.challengeLobbyView, page: _i10.ChallengeLobbyView),
+    _i1.RouteDef(Routes.matchView, page: _i11.MatchView),
+    _i1.RouteDef(Routes.chainReflexView, page: _i12.ChainReflexView),
+    _i1.RouteDef(Routes.cryptoTriviaView, page: _i13.CryptoTriviaView),
+    _i1.RouteDef(Routes.wordStakeView, page: _i14.WordStakeView),
+    _i1.RouteDef(Routes.patternBreakerView, page: _i15.PatternBreakerView),
+    _i1.RouteDef(Routes.mathDuelView, page: _i16.MathDuelView),
+    _i1.RouteDef(Routes.matchResultView, page: _i17.MatchResultView),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
@@ -100,7 +110,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<SplashViewArguments>(
         orElse: () => const SplashViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i2.SplashView(key: args.key),
         settings: data,
       );
@@ -109,7 +119,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<OnboardingViewArguments>(
         orElse: () => const OnboardingViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i3.OnboardingView(key: args.key),
         settings: data,
       );
@@ -118,7 +128,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<AuthViewArguments>(
         orElse: () => const AuthViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i4.AuthView(key: args.key),
         settings: data,
       );
@@ -127,7 +137,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<HomeViewArguments>(
         orElse: () => const HomeViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.HomeView(key: args.key),
         settings: data,
       );
@@ -136,7 +146,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<ProfileViewArguments>(
         orElse: () => const ProfileViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i6.ProfileView(
           key: args.key,
           onPlayPressedOverride: args.onPlayPressedOverride,
@@ -148,108 +158,131 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<LeaderboardViewArguments>(
         orElse: () => const LeaderboardViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
+      return _i18.MaterialPageRoute<dynamic>(
         builder: (context) => _i7.LeaderboardView(key: args.key),
         settings: data,
       );
     },
-    _i8.ChallengeLobbyView: (data) {
+    _i8.PlayModeView: (data) {
+      final args = data.getArgs<PlayModeViewArguments>(
+        orElse: () => const PlayModeViewArguments(),
+      );
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i8.PlayModeView(key: args.key),
+        settings: data,
+      );
+    },
+    _i9.PracticeLobbyView: (data) {
+      final args = data.getArgs<PracticeLobbyViewArguments>(
+        orElse: () => const PracticeLobbyViewArguments(),
+      );
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i9.PracticeLobbyView(key: args.key),
+        settings: data,
+      );
+    },
+    _i10.ChallengeLobbyView: (data) {
       final args = data.getArgs<ChallengeLobbyViewArguments>(
         orElse: () => const ChallengeLobbyViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i8.ChallengeLobbyView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i10.ChallengeLobbyView(
           key: args.key,
           initialChallengeType: args.initialChallengeType,
         ),
         settings: data,
       );
     },
-    _i9.MatchView: (data) {
+    _i11.MatchView: (data) {
       final args = data.getArgs<MatchViewArguments>(
         orElse: () => const MatchViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i9.MatchView(key: args.key),
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i11.MatchView(key: args.key),
         settings: data,
       );
     },
-    _i10.ChainReflexView: (data) {
+    _i12.ChainReflexView: (data) {
       final args = data.getArgs<ChainReflexViewArguments>(nullOk: false);
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i10.ChainReflexView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i12.ChainReflexView(
           key: args.key,
           matchId: args.matchId,
           playerAddress: args.playerAddress,
           opponentAddress: args.opponentAddress,
           stakeAmount: args.stakeAmount,
+          isPractice: args.isPractice,
         ),
         settings: data,
         fullscreenDialog: true,
       );
     },
-    _i11.CryptoTriviaView: (data) {
+    _i13.CryptoTriviaView: (data) {
       final args = data.getArgs<CryptoTriviaViewArguments>(nullOk: false);
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i11.CryptoTriviaView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i13.CryptoTriviaView(
           key: args.key,
           matchId: args.matchId,
           playerAddress: args.playerAddress,
           opponentAddress: args.opponentAddress,
           stakeAmount: args.stakeAmount,
+          isPractice: args.isPractice,
         ),
         settings: data,
         fullscreenDialog: true,
       );
     },
-    _i12.WordStakeView: (data) {
+    _i14.WordStakeView: (data) {
       final args = data.getArgs<WordStakeViewArguments>(nullOk: false);
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i12.WordStakeView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i14.WordStakeView(
           key: args.key,
           matchId: args.matchId,
           playerAddress: args.playerAddress,
           opponentAddress: args.opponentAddress,
           stakeAmount: args.stakeAmount,
+          isPractice: args.isPractice,
         ),
         settings: data,
         fullscreenDialog: true,
       );
     },
-    _i13.PatternBreakerView: (data) {
+    _i15.PatternBreakerView: (data) {
       final args = data.getArgs<PatternBreakerViewArguments>(nullOk: false);
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i13.PatternBreakerView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i15.PatternBreakerView(
           key: args.key,
           matchId: args.matchId,
           playerAddress: args.playerAddress,
           opponentAddress: args.opponentAddress,
           stakeAmount: args.stakeAmount,
+          isPractice: args.isPractice,
         ),
         settings: data,
         fullscreenDialog: true,
       );
     },
-    _i14.MathDuelView: (data) {
+    _i16.MathDuelView: (data) {
       final args = data.getArgs<MathDuelViewArguments>(nullOk: false);
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i14.MathDuelView(
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i16.MathDuelView(
           key: args.key,
           matchId: args.matchId,
           playerAddress: args.playerAddress,
           opponentAddress: args.opponentAddress,
           stakeAmount: args.stakeAmount,
+          isPractice: args.isPractice,
         ),
         settings: data,
         fullscreenDialog: true,
       );
     },
-    _i15.MatchResultView: (data) {
+    _i17.MatchResultView: (data) {
       final args = data.getArgs<MatchResultViewArguments>(
         orElse: () => const MatchResultViewArguments(),
       );
-      return _i16.MaterialPageRoute<dynamic>(
-        builder: (context) => _i15.MatchResultView(key: args.key),
+      return _i18.MaterialPageRoute<dynamic>(
+        builder: (context) => _i17.MatchResultView(key: args.key),
         settings: data,
       );
     },
@@ -265,7 +298,7 @@ class StackedRouter extends _i1.RouterBase {
 class SplashViewArguments {
   const SplashViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -287,7 +320,7 @@ class SplashViewArguments {
 class OnboardingViewArguments {
   const OnboardingViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -309,7 +342,7 @@ class OnboardingViewArguments {
 class AuthViewArguments {
   const AuthViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -331,7 +364,7 @@ class AuthViewArguments {
 class HomeViewArguments {
   const HomeViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -353,7 +386,7 @@ class HomeViewArguments {
 class ProfileViewArguments {
   const ProfileViewArguments({this.key, this.onPlayPressedOverride});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final void Function()? onPlayPressedOverride;
 
@@ -378,7 +411,7 @@ class ProfileViewArguments {
 class LeaderboardViewArguments {
   const LeaderboardViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -397,12 +430,56 @@ class LeaderboardViewArguments {
   }
 }
 
+class PlayModeViewArguments {
+  const PlayModeViewArguments({this.key});
+
+  final _i18.Key? key;
+
+  @override
+  String toString() {
+    return '{"key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant PlayModeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode;
+  }
+}
+
+class PracticeLobbyViewArguments {
+  const PracticeLobbyViewArguments({this.key});
+
+  final _i18.Key? key;
+
+  @override
+  String toString() {
+    return '{"key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant PracticeLobbyViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode;
+  }
+}
+
 class ChallengeLobbyViewArguments {
   const ChallengeLobbyViewArguments({this.key, this.initialChallengeType});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
-  final _i17.ChallengeType? initialChallengeType;
+  final _i19.ChallengeType? initialChallengeType;
 
   @override
   String toString() {
@@ -425,7 +502,7 @@ class ChallengeLobbyViewArguments {
 class MatchViewArguments {
   const MatchViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -451,9 +528,10 @@ class ChainReflexViewArguments {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final String matchId;
 
@@ -463,9 +541,11 @@ class ChainReflexViewArguments {
 
   final int stakeAmount;
 
+  final bool isPractice;
+
   @override
   String toString() {
-    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount", "isPractice": "$isPractice"}';
   }
 
   @override
@@ -475,7 +555,8 @@ class ChainReflexViewArguments {
         other.matchId == matchId &&
         other.playerAddress == playerAddress &&
         other.opponentAddress == opponentAddress &&
-        other.stakeAmount == stakeAmount;
+        other.stakeAmount == stakeAmount &&
+        other.isPractice == isPractice;
   }
 
   @override
@@ -484,7 +565,8 @@ class ChainReflexViewArguments {
         matchId.hashCode ^
         playerAddress.hashCode ^
         opponentAddress.hashCode ^
-        stakeAmount.hashCode;
+        stakeAmount.hashCode ^
+        isPractice.hashCode;
   }
 }
 
@@ -495,9 +577,10 @@ class CryptoTriviaViewArguments {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final String matchId;
 
@@ -507,9 +590,11 @@ class CryptoTriviaViewArguments {
 
   final int stakeAmount;
 
+  final bool isPractice;
+
   @override
   String toString() {
-    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount", "isPractice": "$isPractice"}';
   }
 
   @override
@@ -519,7 +604,8 @@ class CryptoTriviaViewArguments {
         other.matchId == matchId &&
         other.playerAddress == playerAddress &&
         other.opponentAddress == opponentAddress &&
-        other.stakeAmount == stakeAmount;
+        other.stakeAmount == stakeAmount &&
+        other.isPractice == isPractice;
   }
 
   @override
@@ -528,7 +614,8 @@ class CryptoTriviaViewArguments {
         matchId.hashCode ^
         playerAddress.hashCode ^
         opponentAddress.hashCode ^
-        stakeAmount.hashCode;
+        stakeAmount.hashCode ^
+        isPractice.hashCode;
   }
 }
 
@@ -539,9 +626,10 @@ class WordStakeViewArguments {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final String matchId;
 
@@ -551,9 +639,11 @@ class WordStakeViewArguments {
 
   final int stakeAmount;
 
+  final bool isPractice;
+
   @override
   String toString() {
-    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount", "isPractice": "$isPractice"}';
   }
 
   @override
@@ -563,7 +653,8 @@ class WordStakeViewArguments {
         other.matchId == matchId &&
         other.playerAddress == playerAddress &&
         other.opponentAddress == opponentAddress &&
-        other.stakeAmount == stakeAmount;
+        other.stakeAmount == stakeAmount &&
+        other.isPractice == isPractice;
   }
 
   @override
@@ -572,7 +663,8 @@ class WordStakeViewArguments {
         matchId.hashCode ^
         playerAddress.hashCode ^
         opponentAddress.hashCode ^
-        stakeAmount.hashCode;
+        stakeAmount.hashCode ^
+        isPractice.hashCode;
   }
 }
 
@@ -583,9 +675,10 @@ class PatternBreakerViewArguments {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final String matchId;
 
@@ -595,9 +688,11 @@ class PatternBreakerViewArguments {
 
   final int stakeAmount;
 
+  final bool isPractice;
+
   @override
   String toString() {
-    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount", "isPractice": "$isPractice"}';
   }
 
   @override
@@ -607,7 +702,8 @@ class PatternBreakerViewArguments {
         other.matchId == matchId &&
         other.playerAddress == playerAddress &&
         other.opponentAddress == opponentAddress &&
-        other.stakeAmount == stakeAmount;
+        other.stakeAmount == stakeAmount &&
+        other.isPractice == isPractice;
   }
 
   @override
@@ -616,7 +712,8 @@ class PatternBreakerViewArguments {
         matchId.hashCode ^
         playerAddress.hashCode ^
         opponentAddress.hashCode ^
-        stakeAmount.hashCode;
+        stakeAmount.hashCode ^
+        isPractice.hashCode;
   }
 }
 
@@ -627,9 +724,10 @@ class MathDuelViewArguments {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   final String matchId;
 
@@ -639,9 +737,11 @@ class MathDuelViewArguments {
 
   final int stakeAmount;
 
+  final bool isPractice;
+
   @override
   String toString() {
-    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount"}';
+    return '{"key": "$key", "matchId": "$matchId", "playerAddress": "$playerAddress", "opponentAddress": "$opponentAddress", "stakeAmount": "$stakeAmount", "isPractice": "$isPractice"}';
   }
 
   @override
@@ -651,7 +751,8 @@ class MathDuelViewArguments {
         other.matchId == matchId &&
         other.playerAddress == playerAddress &&
         other.opponentAddress == opponentAddress &&
-        other.stakeAmount == stakeAmount;
+        other.stakeAmount == stakeAmount &&
+        other.isPractice == isPractice;
   }
 
   @override
@@ -660,14 +761,15 @@ class MathDuelViewArguments {
         matchId.hashCode ^
         playerAddress.hashCode ^
         opponentAddress.hashCode ^
-        stakeAmount.hashCode;
+        stakeAmount.hashCode ^
+        isPractice.hashCode;
   }
 }
 
 class MatchResultViewArguments {
   const MatchResultViewArguments({this.key});
 
-  final _i16.Key? key;
+  final _i18.Key? key;
 
   @override
   String toString() {
@@ -686,9 +788,9 @@ class MatchResultViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i18.NavigationService {
+extension NavigatorStateExtension on _i20.NavigationService {
   Future<dynamic> navigateToSplashView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -706,7 +808,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToOnboardingView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -724,7 +826,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToAuthView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -742,7 +844,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToHomeView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -760,7 +862,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToProfileView({
-    _i16.Key? key,
+    _i18.Key? key,
     void Function()? onPlayPressedOverride,
     int? routerId,
     bool preventDuplicates = true,
@@ -782,7 +884,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToLeaderboardView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -799,9 +901,45 @@ extension NavigatorStateExtension on _i18.NavigationService {
     );
   }
 
+  Future<dynamic> navigateToPlayModeView({
+    _i18.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.playModeView,
+      arguments: PlayModeViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> navigateToPracticeLobbyView({
+    _i18.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.practiceLobbyView,
+      arguments: PracticeLobbyViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
   Future<dynamic> navigateToChallengeLobbyView({
-    _i16.Key? key,
-    _i17.ChallengeType? initialChallengeType,
+    _i18.Key? key,
+    _i19.ChallengeType? initialChallengeType,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -822,7 +960,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToMatchView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -840,11 +978,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToChainReflexView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -859,6 +998,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -868,11 +1008,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToCryptoTriviaView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -887,6 +1028,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -896,11 +1038,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToWordStakeView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -915,6 +1058,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -924,11 +1068,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToPatternBreakerView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -943,6 +1088,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -952,11 +1098,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToMathDuelView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -971,6 +1118,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -980,7 +1128,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> navigateToMatchResultView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -998,7 +1146,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithSplashView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1016,7 +1164,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithOnboardingView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1034,7 +1182,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithAuthView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1052,7 +1200,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithHomeView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1070,7 +1218,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithProfileView({
-    _i16.Key? key,
+    _i18.Key? key,
     void Function()? onPlayPressedOverride,
     int? routerId,
     bool preventDuplicates = true,
@@ -1092,7 +1240,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithLeaderboardView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1109,9 +1257,45 @@ extension NavigatorStateExtension on _i18.NavigationService {
     );
   }
 
+  Future<dynamic> replaceWithPlayModeView({
+    _i18.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.playModeView,
+      arguments: PlayModeViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> replaceWithPracticeLobbyView({
+    _i18.Key? key,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+    transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.practiceLobbyView,
+      arguments: PracticeLobbyViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
   Future<dynamic> replaceWithChallengeLobbyView({
-    _i16.Key? key,
-    _i17.ChallengeType? initialChallengeType,
+    _i18.Key? key,
+    _i19.ChallengeType? initialChallengeType,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1132,7 +1316,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithMatchView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1150,11 +1334,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithChainReflexView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1169,6 +1354,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -1178,11 +1364,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithCryptoTriviaView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1197,6 +1384,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -1206,11 +1394,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithWordStakeView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1225,6 +1414,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -1234,11 +1424,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithPatternBreakerView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1253,6 +1444,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -1262,11 +1454,12 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithMathDuelView({
-    _i16.Key? key,
+    _i18.Key? key,
     required String matchId,
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1281,6 +1474,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
         playerAddress: playerAddress,
         opponentAddress: opponentAddress,
         stakeAmount: stakeAmount,
+        isPractice: isPractice,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -1290,7 +1484,7 @@ extension NavigatorStateExtension on _i18.NavigationService {
   }
 
   Future<dynamic> replaceWithMatchResultView({
-    _i16.Key? key,
+    _i18.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,

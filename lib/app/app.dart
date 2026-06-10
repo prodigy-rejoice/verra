@@ -13,6 +13,8 @@ import '../features/leaderboard/leaderboard_view.dart';
 import '../features/match/match_view.dart';
 import '../features/match_result/match_result_view.dart';
 import '../features/onboarding/onboarding_view.dart';
+import '../features/play_mode/play_mode_view.dart';
+import '../features/practice_lobby/practice_lobby_view.dart';
 import '../features/profile/profile_view.dart';
 import '../features/splash/splash_view.dart';
 
@@ -35,6 +37,8 @@ import '../services/zklogin_service.dart';
     MaterialRoute(page: HomeView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: LeaderboardView),
+    MaterialRoute(page: PlayModeView),
+    MaterialRoute(page: PracticeLobbyView),
     MaterialRoute(page: ChallengeLobbyView),
     MaterialRoute(page: MatchView),
     MaterialRoute(page: ChainReflexView, fullscreenDialog: true),
