@@ -17,6 +17,7 @@ enum LetterStatus { correct, present, absent }
 class WordStakeViewModel extends BaseViewModel {
   final SupabaseService _supabaseService = locator<SupabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
   final Logger _logger = getLogger('WordStakeViewModel');
   final Random _random = Random();
 
@@ -36,6 +37,9 @@ class WordStakeViewModel extends BaseViewModel {
   String? _matchId;
   int _stakeAmount = 0;
   bool _isChallenger = true;
+  bool _hasResigned = false;
+  bool _isPractice = false;
+  bool get isPractice => _isPractice;
   bool _playerSolved = false;
   bool _opponentSolved = false;
 
@@ -91,13 +95,16 @@ class WordStakeViewModel extends BaseViewModel {
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
   }) async {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
-    // TODO: set from match data when real matchmaking is wired
+    _isPractice = isPractice;
     _isChallenger = true;
-    _logger.i('Word Stake starting — match $matchId');
-    if (matchId.isNotEmpty) {
+    _logger.i('Word Stake starting — match $matchId (practice=$isPractice)');
+    if (_isPractice) {
+      _targetWord = _wordList[_random.nextInt(_wordList.length)];
+    } else if (matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
       await _resolveTargetWord();
     } else {
@@ -107,6 +114,23 @@ class WordStakeViewModel extends BaseViewModel {
     _startTimer();
     _gameStatus = WordStakeStatus.playing;
     notifyListeners();
+  }
+
+  Future<void> resign() async {
+    if (_gameStatus != WordStakeStatus.playing) return;
+    if (_hasResigned) return;
+    final response = await _dialogService.showConfirmationDialog(
+      title: 'Resign?',
+      description:
+          'You will forfeit your staked rep to your opponent. This cannot be undone.',
+      confirmationTitle: 'Resign',
+      cancelTitle: 'Cancel',
+    );
+    if (response?.confirmed == true) {
+      _hasResigned = true;
+      _logger.i('Player resigned');
+      _endGame(false);
+    }
   }
 
   void _startTimer() {
@@ -283,7 +307,7 @@ class WordStakeViewModel extends BaseViewModel {
 
   void _endGame(bool playerWon) {
     _timer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     _isWinner = playerWon;
@@ -293,6 +317,7 @@ class WordStakeViewModel extends BaseViewModel {
   }
 
   Future<void> _syncSolved() async {
+    if (_isPractice) return;
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
       final column = _isChallenger ? 'challenger_score' : 'opponent_score';
@@ -312,7 +337,7 @@ class WordStakeViewModel extends BaseViewModel {
   @override
   void dispose() {
     _timer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     super.dispose();
