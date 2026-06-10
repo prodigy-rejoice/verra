@@ -15,6 +15,7 @@ enum CryptoTriviaStatus { waiting, playing, finished }
 class CryptoTriviaViewModel extends BaseViewModel {
   final SupabaseService _supabaseService = locator<SupabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
   final Logger _logger = getLogger('CryptoTriviaViewModel');
   final Random _random = Random();
 
@@ -50,6 +51,9 @@ class CryptoTriviaViewModel extends BaseViewModel {
   String? _matchId;
   int _stakeAmount = 0;
   bool _isChallenger = true;
+  bool _hasResigned = false;
+  bool _isPractice = false;
+  bool get isPractice => _isPractice;
 
   List<Map<String, String>> _selected = [];
   int _index = 0;
@@ -97,13 +101,14 @@ class CryptoTriviaViewModel extends BaseViewModel {
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
   }) {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
-    // TODO: set from match data when real matchmaking is wired
+    _isPractice = isPractice;
     _isChallenger = true;
-    _logger.i('Crypto Trivia starting — match $matchId');
-    if (matchId.isNotEmpty) {
+    _logger.i('Crypto Trivia starting — match $matchId (practice=$isPractice)');
+    if (!_isPractice && matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
     }
     final pool = List<Map<String, String>>.from(_allQuestions)
@@ -113,6 +118,23 @@ class CryptoTriviaViewModel extends BaseViewModel {
     _startTimer();
     _gameStatus = CryptoTriviaStatus.playing;
     notifyListeners();
+  }
+
+  Future<void> resign() async {
+    if (_gameStatus != CryptoTriviaStatus.playing) return;
+    if (_hasResigned) return;
+    final response = await _dialogService.showConfirmationDialog(
+      title: 'Resign?',
+      description:
+          'You will forfeit your staked rep to your opponent. This cannot be undone.',
+      confirmationTitle: 'Resign',
+      cancelTitle: 'Cancel',
+    );
+    if (response?.confirmed == true) {
+      _hasResigned = true;
+      _logger.i('Player resigned');
+      _endGame(false);
+    }
   }
 
   void onAnswerSelected(String answer) {
@@ -201,7 +223,7 @@ class CryptoTriviaViewModel extends BaseViewModel {
   void _endGame(bool playerWon) {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     _isWinner = playerWon;
@@ -211,6 +233,7 @@ class CryptoTriviaViewModel extends BaseViewModel {
   }
 
   Future<void> _syncScore() async {
+    if (_isPractice) return;
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
       final column = _isChallenger ? 'challenger_score' : 'opponent_score';
@@ -231,7 +254,7 @@ class CryptoTriviaViewModel extends BaseViewModel {
   void dispose() {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     super.dispose();

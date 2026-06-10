@@ -14,12 +14,14 @@ class PatternBreakerView extends StackedView<PatternBreakerViewModel> {
     required this.playerAddress,
     required this.opponentAddress,
     required this.stakeAmount,
+    this.isPractice = false,
   });
 
   final String matchId;
   final String playerAddress;
   final String opponentAddress;
   final int stakeAmount;
+  final bool isPractice;
 
   @override
   Widget builder(
@@ -33,6 +35,16 @@ class PatternBreakerView extends StackedView<PatternBreakerViewModel> {
         child: Stack(
           children: [
             _GameBody(viewModel: viewModel),
+            if (viewModel.gameStatus == PatternBreakerStatus.playing)
+              Positioned(
+                bottom: 24,
+                left: 48,
+                right: 48,
+                child: VerraButton(
+                  label: 'Resign',
+                  onTap: viewModel.resign,
+                ),
+              ),
             if (viewModel.gameStatus == PatternBreakerStatus.finished)
               _GameOverOverlay(viewModel: viewModel),
           ],
@@ -52,6 +64,7 @@ class PatternBreakerView extends StackedView<PatternBreakerViewModel> {
       playerAddress: playerAddress,
       opponentAddress: opponentAddress,
       stakeAmount: stakeAmount,
+      isPractice: isPractice,
     );
   }
 }
@@ -259,8 +272,16 @@ class _GameOverOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final practice = viewModel.isPractice;
     final won = viewModel.isWinner;
     final stake = viewModel.stakeAmount;
+    final title = practice ? 'Practice Complete' : (won ? 'Victory!' : 'Defeat');
+    final titleColor = practice
+        ? AppColors.primary
+        : (won ? AppColors.success : AppColors.error);
+    final subtitle = practice
+        ? 'Score: ${viewModel.playerScore}'
+        : (won ? '+$stake REP' : '-$stake REP');
     return Positioned.fill(
       child: ColoredBox(
         color: AppColors.background.withValues(alpha: 0.92),
@@ -268,16 +289,11 @@ class _GameOverOverlay extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              won ? 'Victory!' : 'Defeat',
-              style: AppTextStyles.headlineLarge.copyWith(
-                color: won ? AppColors.success : AppColors.error,
-              ),
+              title,
+              style: AppTextStyles.headlineLarge.copyWith(color: titleColor),
             ),
             const SizedBox(height: 12),
-            Text(
-              won ? '+$stake REP' : '-$stake REP',
-              style: AppTextStyles.bodyLarge,
-            ),
+            Text(subtitle, style: AppTextStyles.bodyLarge),
             const SizedBox(height: 40),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48),

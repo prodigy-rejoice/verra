@@ -15,6 +15,7 @@ enum MathDuelStatus { waiting, playing, finished }
 class MathDuelViewModel extends BaseViewModel {
   final SupabaseService _supabaseService = locator<SupabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
   final Logger _logger = getLogger('MathDuelViewModel');
   final Random _random = Random();
 
@@ -26,6 +27,9 @@ class MathDuelViewModel extends BaseViewModel {
   String? _matchId;
   int _stakeAmount = 0;
   bool _isChallenger = true;
+  bool _hasResigned = false;
+  bool _isPractice = false;
+  bool get isPractice => _isPractice;
 
   String _currentProblem = '';
   String get currentProblem => _currentProblem;
@@ -64,19 +68,37 @@ class MathDuelViewModel extends BaseViewModel {
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
   }) {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
-    // TODO: set from match data when real matchmaking is wired
+    _isPractice = isPractice;
     _isChallenger = true;
-    _logger.i('Math Duel starting — match $matchId');
-    if (matchId.isNotEmpty) {
+    _logger.i('Math Duel starting — match $matchId (practice=$isPractice)');
+    if (!_isPractice && matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
     }
     _generateProblem();
     _startTimer();
     _gameStatus = MathDuelStatus.playing;
     notifyListeners();
+  }
+
+  Future<void> resign() async {
+    if (_gameStatus != MathDuelStatus.playing) return;
+    if (_hasResigned) return;
+    final response = await _dialogService.showConfirmationDialog(
+      title: 'Resign?',
+      description:
+          'You will forfeit your staked rep to your opponent. This cannot be undone.',
+      confirmationTitle: 'Resign',
+      cancelTitle: 'Cancel',
+    );
+    if (response?.confirmed == true) {
+      _hasResigned = true;
+      _logger.i('Player resigned');
+      _endGame(false);
+    }
   }
 
   void onNumberTap(String digit) {
@@ -213,7 +235,7 @@ class MathDuelViewModel extends BaseViewModel {
   void _endGame(bool playerWon) {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     _isWinner = playerWon;
@@ -223,6 +245,7 @@ class MathDuelViewModel extends BaseViewModel {
   }
 
   Future<void> _syncScore() async {
+    if (_isPractice) return;
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
       final column = _isChallenger ? 'challenger_score' : 'opponent_score';
@@ -243,7 +266,7 @@ class MathDuelViewModel extends BaseViewModel {
   void dispose() {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     super.dispose();

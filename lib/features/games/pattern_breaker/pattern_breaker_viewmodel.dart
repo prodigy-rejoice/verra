@@ -15,6 +15,7 @@ enum PatternBreakerStatus { waiting, playing, finished }
 class PatternBreakerViewModel extends BaseViewModel {
   final SupabaseService _supabaseService = locator<SupabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
   final Logger _logger = getLogger('PatternBreakerViewModel');
   final Random _random = Random();
 
@@ -59,6 +60,9 @@ class PatternBreakerViewModel extends BaseViewModel {
   String? _matchId;
   int _stakeAmount = 0;
   bool _isChallenger = true;
+  bool _hasResigned = false;
+  bool _isPractice = false;
+  bool get isPractice => _isPractice;
 
   List<int> _patternOrder = [];
   int _index = 0;
@@ -115,13 +119,14 @@ class PatternBreakerViewModel extends BaseViewModel {
     required String playerAddress,
     required String opponentAddress,
     required int stakeAmount,
+    bool isPractice = false,
   }) {
     _matchId = matchId;
     _stakeAmount = stakeAmount;
-    // TODO: set from match data when real matchmaking is wired
     _isChallenger = true;
-    _logger.i('Pattern Breaker starting — match $matchId');
-    if (matchId.isNotEmpty) {
+    _isPractice = isPractice;
+    _logger.i('Pattern Breaker starting — match $matchId (practice=$isPractice)');
+    if (!_isPractice && matchId.isNotEmpty) {
       _supabaseService.subscribeToMatch(matchId, _onMatchUpdate);
     }
     _patternOrder = List<int>.generate(_patterns.length, (i) => i)
@@ -130,6 +135,23 @@ class PatternBreakerViewModel extends BaseViewModel {
     _startTimer();
     _gameStatus = PatternBreakerStatus.playing;
     notifyListeners();
+  }
+
+  Future<void> resign() async {
+    if (_gameStatus != PatternBreakerStatus.playing) return;
+    if (_hasResigned) return;
+    final response = await _dialogService.showConfirmationDialog(
+      title: 'Resign?',
+      description:
+          'You will forfeit your staked rep to your opponent. This cannot be undone.',
+      confirmationTitle: 'Resign',
+      cancelTitle: 'Cancel',
+    );
+    if (response?.confirmed == true) {
+      _hasResigned = true;
+      _logger.i('Player resigned');
+      _endGame(false);
+    }
   }
 
   void onOptionSelected(String answer) {
@@ -222,7 +244,7 @@ class PatternBreakerViewModel extends BaseViewModel {
   void _endGame(bool playerWon) {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     _isWinner = playerWon;
@@ -232,6 +254,7 @@ class PatternBreakerViewModel extends BaseViewModel {
   }
 
   Future<void> _syncScore() async {
+    if (_isPractice) return;
     if (_matchId == null || _matchId!.isEmpty) return;
     try {
       final column = _isChallenger ? 'challenger_score' : 'opponent_score';
@@ -252,7 +275,7 @@ class PatternBreakerViewModel extends BaseViewModel {
   void dispose() {
     _timer?.cancel();
     _feedbackTimer?.cancel();
-    if (_matchId != null && _matchId!.isNotEmpty) {
+    if (!_isPractice && _matchId != null && _matchId!.isNotEmpty) {
       _supabaseService.unsubscribeFromMatch(_matchId!);
     }
     super.dispose();
