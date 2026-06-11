@@ -8,13 +8,29 @@ import 'core/constants/app_colors.dart';
 import 'core/constants/app_strings.dart';
 import 'core/constants/app_text_styles.dart';
 import 'services/supabase_service.dart';
+import 'services/zklogin_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await setupLocator();
+  setupSnackbarUi();
   await locator<SupabaseService>().initialize();
+  await locator<ZkLoginService>().initialize();
   runApp(const VerraApp());
+}
+
+void setupSnackbarUi() {
+  final service = locator<SnackbarService>();
+  service.registerSnackbarConfig(
+    SnackbarConfig(
+      duration: const Duration(seconds: 3),
+      backgroundColor: AppColors.surface,
+      textColor: AppColors.textPrimary,
+      borderRadius: 12,
+      borderColor: AppColors.border,
+    ),
+  );
 }
 
 class VerraApp extends StatelessWidget {

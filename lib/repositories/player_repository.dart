@@ -13,23 +13,17 @@ class PlayerRepository {
 
   static const String _walletAddressKey = 'verra_wallet_address';
   static const String _displayNameKey = 'verra_display_name';
-  static const String _noProfileMessage = 'No profile found on-chain.';
 
   Future<PlayerProfile?> getProfile(String walletAddress) async {
     _logger.i('Fetching profile for $walletAddress');
     try {
       final profile = await _suiService.getPlayerProfile(walletAddress);
+      if (profile == null) return null;
       final displayName = await _readLocalDisplayName(walletAddress);
       _logger.d('Profile fetched — rank: ${profile.rank.displayName}');
       return displayName == null
           ? profile
           : profile.copyWith(displayName: displayName);
-    } on SuiException catch (e) {
-      if (e.message == _noProfileMessage) {
-        _logger.i('No on-chain profile for $walletAddress');
-        return null;
-      }
-      rethrow;
     } on VerraException {
       rethrow;
     } catch (e, stack) {
@@ -40,7 +34,6 @@ class PlayerRepository {
 
   Future<bool> hasProfile(String walletAddress) async {
     _logger.i('Checking profile existence for $walletAddress');
-    if (walletAddress == '0xVERRA_TEST_WALLET') return true; // TEST FALLBACK
     return await getProfile(walletAddress) != null;
   }
 

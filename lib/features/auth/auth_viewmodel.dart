@@ -34,8 +34,12 @@ class AuthViewModel extends BaseViewModel {
     _logger.i('Signing in with Google');
     try {
       final walletAddress = await _zkLoginService.signInWithGoogle();
+      if (walletAddress == null) {
+        _logger.w('Sign-in cancelled by user');
+        return;
+      }
       await _persistWalletAddress(walletAddress);
-      _logger.d('Sign-in succeeded — wallet $walletAddress');
+      _logger.d('Sign-in succeeded');
       await _ensureProfile(walletAddress);
       await _navigationService.replaceWith(Routes.homeView);
     } on VerraException catch (e) {
