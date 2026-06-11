@@ -12,7 +12,7 @@ class SuiService {
   final Logger _logger = getLogger('SuiService');
   final Dio _dio = Dio(BaseOptions(baseUrl: SuiConstants.testnetRpcUrl));
 
-  Future<PlayerProfile> getPlayerProfile(String walletAddress) async {
+  Future<PlayerProfile?> getPlayerProfile(String walletAddress) async {
     _logger.i('Fetching on-chain profile for $walletAddress');
     try {
       final owned = await _rpcCall('suix_getOwnedObjects', [
@@ -26,21 +26,17 @@ class SuiService {
       ]);
       final data = owned['data'] as List<dynamic>? ?? [];
       if (data.isEmpty) {
-        throw const SuiException('No profile found on-chain.');
+        _logger.i('No on-chain profile for $walletAddress');
+        return null;
       }
       final objectId =
           (data.first as Map<String, dynamic>)['data']['objectId'] as String;
       return _fetchProfile(objectId, walletAddress);
+    } on VerraException {
+      rethrow;
     } catch (e, stack) {
-      // TEST FALLBACK — remove when zkLogin is wired
-      _logger.w('Profile fetch failed — returning test fallback', error: e, stackTrace: stack);
-      return PlayerProfile(
-        walletAddress: walletAddress,
-        repScore: 1000,
-        wins: 0,
-        losses: 0,
-        challengesCompleted: 0,
-      );
+      _logger.e('Profile fetch failed', error: e, stackTrace: stack);
+      throw SuiException('Failed to read player profile.', cause: e);
     }
   }
 
