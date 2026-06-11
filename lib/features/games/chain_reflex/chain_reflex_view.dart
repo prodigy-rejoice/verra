@@ -34,21 +34,41 @@ class ChainReflexView extends StackedView<ChainReflexViewModel> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            _GameBody(viewModel: viewModel),
+            Expanded(
+              child: Stack(
+                children: [
+                  _GameBody(viewModel: viewModel),
+                  if (viewModel.gameStatus == ChainReflexStatus.finished)
+                    _GameOverOverlay(viewModel: viewModel),
+                ],
+              ),
+            ),
             if (viewModel.gameStatus == ChainReflexStatus.playing)
-              Positioned(
-                bottom: 24,
-                left: 48,
-                right: 48,
-                child: VerraButton(
-                  label: 'Resign',
-                  onTap: viewModel.resign,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton(
+                    onPressed: viewModel.resign,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error, width: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Resign',
+                      style: AppTextStyles.labelLarge.copyWith(
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            if (viewModel.gameStatus == ChainReflexStatus.finished)
-              _GameOverOverlay(viewModel: viewModel),
           ],
         ),
       ),
